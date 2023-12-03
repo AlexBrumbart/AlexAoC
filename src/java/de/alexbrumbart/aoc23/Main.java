@@ -15,6 +15,8 @@ public final class Main {
         System.out.println("Tag 1, A2: " + day01B());
         System.out.println("Tag 2, A1: " + day02A());
         System.out.println("Tag 2, A2: " + day02B());
+        System.out.println("Tag 3, A1: " + day03A());
+        System.out.println("Tag 3, A2: " + day03B());
     }
 
     public static List<String> readInput(String name) {
@@ -71,5 +73,17 @@ public final class Main {
         var input = readInput("day2_2.txt");
 
         return input.stream().map(CubeGame::readInputLine).map(CubeGame::minNeeded).mapToInt(i -> i[0] * i[1] * i[2]).sum();
+    }
+
+    public static int day03A() {
+        var input = readInput("day3_1.txt");
+
+        return EngineSchematic.readInput(input).findParts().stream().mapToInt(value -> value).sum();
+    }
+
+    public static int day03B() {
+        var input = readInput("day3_2.txt");
+
+        return EngineSchematic.readInput(input).findGears().stream().mapToInt(value -> value.getValue() * value.getKey()).sum();
     }
 }
