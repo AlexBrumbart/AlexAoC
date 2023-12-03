@@ -11,8 +11,10 @@ import java.util.Objects;
 public final class Main {
     @SuppressWarnings("java:S106")
     public static void main(String[] args) {
-        System.out.println(day01A());
-        System.out.println(day01B());
+        System.out.println("Tag 1, A1: " + day01A());
+        System.out.println("Tag 1, A2: " + day01B());
+        System.out.println("Tag 2, A1: " + day02A());
+        System.out.println("Tag 2, A2: " + day02B());
     }
 
     public static List<String> readInput(String name) {
@@ -57,5 +59,17 @@ public final class Main {
 
                     return Integer.parseInt(String.valueOf(a) + b);
                 }).sum();
+    }
+
+    public static int day02A() {
+        var input = readInput("day2_1.txt");
+
+        return input.stream().map(CubeGame::readInputLine).filter(cubeGame -> cubeGame.possibleWith(12, 13, 14)).mapToInt(CubeGame::id).sum();
+    }
+
+    public static int day02B() {
+        var input = readInput("day2_2.txt");
+
+        return input.stream().map(CubeGame::readInputLine).map(CubeGame::minNeeded).mapToInt(i -> i[0] * i[1] * i[2]).sum();
     }
 }
