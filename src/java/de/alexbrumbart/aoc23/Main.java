@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,6 +19,8 @@ public final class Main {
         System.out.println("Tag 2, A2: " + day02B());
         System.out.println("Tag 3, A1: " + day03A());
         System.out.println("Tag 3, A2: " + day03B());
+        System.out.println("Tag 4, A1: " + day04A());
+        System.out.println("Tag 4, A2: " + day04B());
     }
 
     public static List<String> readInput(String name) {
@@ -85,5 +89,73 @@ public final class Main {
         var input = readInput("day3_2.txt");
 
         return EngineSchematic.readInput(input).findGears().stream().mapToInt(value -> value.getValue() * value.getKey()).sum();
+    }
+
+    public static Object day04A() {
+        var input = readInput("day4_1.txt");
+
+        return input.stream()
+                .map(s -> s.split(":")[1])
+                .map(s -> {
+                    var split = s.split("\\|");
+
+                    return new AbstractMap.SimpleEntry<>(
+                            Arrays.stream(split[0].split(" ")).filter(s1 -> !s1.isEmpty()).map(Integer::parseInt).toList(),
+                            Arrays.stream(split[1].split(" ")).filter(s1 -> !s1.isEmpty()).map(Integer::parseInt).toList());
+                })
+                .mapToInt(value -> {
+                    int i = 0;
+                    List<Integer> keys = value.getKey();
+                    List<Integer> values = value.getValue();
+
+                    for (int j : values) {
+                        if (keys.contains(j))
+                            i = (i == 0) ? 1 : i * 2;
+                    }
+
+                    return i;
+                }).sum();
+    }
+
+    public static int day04B() {
+        var input = readInput("day4_2.txt");
+        int[] counts = new int[input.size()];
+        Arrays.fill(counts, 1);
+
+        var list = input.stream()
+                .map(s -> s.split(":")[1])
+                .map(s -> {
+                    var split = s.split("\\|");
+
+                    return new AbstractMap.SimpleEntry<>(
+                            Arrays.stream(split[0].split(" ")).filter(s1 -> !s1.isEmpty()).map(Integer::parseInt).toList(),
+                            Arrays.stream(split[1].split(" ")).filter(s1 -> !s1.isEmpty()).map(Integer::parseInt).toList());
+                }).toList();
+
+        int a = 0;
+        for (var x : list) {
+            int i = 0;
+            List<Integer> keys = x.getKey();
+            List<Integer> values = x.getValue();
+
+            for (int j : values) {
+                if (keys.contains(j))
+                    ++i;
+            }
+
+            for (int b = 1; b <= i; ++b) {
+                if (a + b < input.size()) {
+                    counts[a + b] += counts[a];
+                }
+            }
+
+            ++a;
+        }
+
+        int count = 0;
+        for (int i : counts)
+            count += i;
+
+        return count;
     }
 }
