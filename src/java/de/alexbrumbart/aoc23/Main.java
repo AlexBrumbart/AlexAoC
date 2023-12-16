@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.LongStream;
 
 public final class Main {
     @SuppressWarnings("java:S106")
@@ -21,6 +22,8 @@ public final class Main {
         System.out.println("Tag 3, A2: " + day03B());
         System.out.println("Tag 4, A1: " + day04A());
         System.out.println("Tag 4, A2: " + day04B());
+        System.out.println("Tag 5, A1: " + day05A());
+        System.out.println("Tag 5, A2: " + day05B());
     }
 
     public static List<String> readInput(String name) {
@@ -157,5 +160,95 @@ public final class Main {
             count += i;
 
         return count;
+    }
+
+    @SuppressWarnings("java:S127")
+    public static long day05A() {
+        var input = readInput("day5_1.txt");
+
+        List<Long> seeds = new ArrayList<>();
+        var seedStrings = input.get(0).split(" ");
+        for (int i = 1; i < seedStrings.length; i++) {
+            seeds.add(Long.parseLong(seedStrings[i]));
+        }
+
+        input.remove(0);
+
+        List<AlmanacMap> maps = new ArrayList<>();
+        List<String> temp = new ArrayList<>();
+        for (int i = 2; i < input.size(); i++) {
+            var s = input.get(i);
+            if (s.isEmpty()) {
+                maps.add(AlmanacMap.readInputLine(temp));
+                temp.clear();
+                i++;
+
+                continue;
+            }
+
+            temp.add(s);
+        }
+
+        maps.add(AlmanacMap.readInputLine(temp));
+
+        long lowest = Long.MAX_VALUE;
+        for (var i : seeds) {
+            long l = i;
+            for (var map : maps) {
+                l = map.findMapping(l);
+            }
+
+            if (l < lowest)
+                lowest = l;
+        }
+
+        return lowest;
+    }
+
+    @SuppressWarnings("java:S127")
+    public static long day05B() {
+        var input = readInput("day5_1.txt");
+
+        List<Long> seeds = new ArrayList<>();
+        var seedStrings = input.get(0).split(" ");
+        for (int i = 1; i < seedStrings.length; i++) {
+            seeds.add(Long.parseLong(seedStrings[i]));
+        }
+
+        input.remove(0);
+
+        List<AlmanacMap> maps = new ArrayList<>();
+        List<String> temp = new ArrayList<>();
+        for (int i = 2; i < input.size(); i++) {
+            var s = input.get(i);
+            if (s.isEmpty()) {
+                maps.add(AlmanacMap.readInputLine(temp));
+                temp.clear();
+                i++;
+
+                continue;
+            }
+
+            temp.add(s);
+        }
+
+        maps.add(AlmanacMap.readInputLine(temp));
+
+        long lowest = Long.MAX_VALUE;
+        for (int i = 0; i < seeds.size(); i += 2) {
+            long start = seeds.get(i);
+            long range = seeds.get(i + 1);
+
+            lowest = Math.min(lowest, LongStream.range(start, start + range).parallel().map(operand ->  {
+                long l = operand;
+                for (var map : maps) {
+                    l = map.findMapping(l);
+                }
+
+                return l;
+            }).reduce(Long.MAX_VALUE, Math::min));
+        }
+
+        return lowest;
     }
 }
