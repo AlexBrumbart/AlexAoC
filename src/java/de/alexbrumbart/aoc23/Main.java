@@ -12,18 +12,20 @@ import java.util.Objects;
 import java.util.stream.LongStream;
 
 public final class Main {
-    @SuppressWarnings("java:S106")
+    @SuppressWarnings({"java:S106", "java:S125"})
     public static void main(String[] args) {
-        System.out.println("Tag 1, A1: " + day01A());
-        System.out.println("Tag 1, A2: " + day01B());
-        System.out.println("Tag 2, A1: " + day02A());
-        System.out.println("Tag 2, A2: " + day02B());
-        System.out.println("Tag 3, A1: " + day03A());
-        System.out.println("Tag 3, A2: " + day03B());
-        System.out.println("Tag 4, A1: " + day04A());
-        System.out.println("Tag 4, A2: " + day04B());
-        System.out.println("Tag 5, A1: " + day05A());
-        System.out.println("Tag 5, A2: " + day05B());
+//        System.out.println("Tag 1, A1: " + day01A());
+//        System.out.println("Tag 1, A2: " + day01B());
+//        System.out.println("Tag 2, A1: " + day02A());
+//        System.out.println("Tag 2, A2: " + day02B());
+//        System.out.println("Tag 3, A1: " + day03A());
+//        System.out.println("Tag 3, A2: " + day03B());
+//        System.out.println("Tag 4, A1: " + day04A());
+//        System.out.println("Tag 4, A2: " + day04B());
+//        System.out.println("Tag 5, A1: " + day05A());
+//        System.out.println("Tag 5, A2: " + day05B());
+        System.out.println("Tag 6, A1: " + day06A());
+        System.out.println("Tag 6, A2: " + day06B());
     }
 
     public static List<String> readInput(String name) {
@@ -239,7 +241,7 @@ public final class Main {
             long start = seeds.get(i);
             long range = seeds.get(i + 1);
 
-            lowest = Math.min(lowest, LongStream.range(start, start + range).parallel().map(operand ->  {
+            lowest = Math.min(lowest, LongStream.range(start, start + range).parallel().map(operand -> {
                 long l = operand;
                 for (var map : maps) {
                     l = map.findMapping(l);
@@ -250,5 +252,44 @@ public final class Main {
         }
 
         return lowest;
+    }
+
+    public static int day06A() {
+        var input = readInput("day6_1.txt");
+
+        var line1 = Arrays.stream(input.get(0).split(" ")).filter(s -> !s.isEmpty()).toList();
+        var line2 = Arrays.stream(input.get(1).split(" ")).filter(s -> !s.isEmpty()).toList();
+        List<int[]> races = new ArrayList<>();
+        for (int i = 1; i < line1.size(); i++) {
+            races.add(new int[]{Integer.parseInt(line1.get(i)), Integer.parseInt(line2.get(i))});
+        }
+
+        int totalSolutions = 1;
+        for (var race : races) {
+            int solutions = 0;
+            for (int i = 0; i <= race[0]; i++) {
+                if (i * (race[0] - i) > race[1])
+                    solutions++;
+            }
+
+            totalSolutions *= solutions;
+        }
+
+        return totalSolutions;
+    }
+
+    public static int day06B() {
+        var input = readInput("day6_2.txt");
+
+        var time = Integer.parseInt(input.get(0).split(":")[1].replace(" ", ""));
+        var goal = Long.parseLong(input.get(1).split(":")[1].replace(" ", ""));
+
+        int solutions = 0;
+        for (long i = 0; i <= time; i++) {
+            if (i * (time - i) > goal)
+                solutions++;
+        }
+
+        return solutions;
     }
 }
